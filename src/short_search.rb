@@ -20,16 +20,19 @@ OptionParser.new do |opts|
   opts.on("-ip", "--ip_address", "ip listened on") do |ip|
     options[:ip] = ip
   end
-  opt.on("-h","--help","help") do
+  opts.on("-h","--help","help") do
     puts opt_parser
   end
 end.parse!
 
-set :port, options[:port] || 55535
+port = options[:port] || 55535
+
+set :port, port
 set :bind, options[:ip] || '127.0.0.1'
 set :logging, options[:logging] || false
 
-ThisSite = ARGV[0]
+ThisSite = "#{ARGV[0]}:#{port}"
+puts "ThisSite: #{ThisSite}"
 
 #This program was inspired by facebook's bunny lol, hence the name of the struct
 LOL = Struct.new(:shortcut, :redirect_fmt_str, :usage, :description) do
@@ -64,8 +67,8 @@ end
 
 get '/' do
   %Q{
-link rel="search" type="application/opensearchdescription+xml" title="short_search" href=#{ThisSite}/search/xml">
-<form id="lol" method="get" action=#{ThisSite}/lol">
+<link rel="search" type="application/opensearchdescription+xml" title="short_search" href="#{ThisSite}/search/xml">
+<form id="lol" method="get" action="#{ThisSite}/lol">
   <input type="search" name="q" />
   <input type="submit" />
 </form>
